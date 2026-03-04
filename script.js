@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // ★ Function to send message silently via Formspree
   function sendMessageSilently(messageText){
-    fetch('https://formspree.io/f/xykdrnwl', {
+    fetch('https://formspree.io/f/xykdrbjw', {
       method: 'POST',
       headers: {
         'Accept': 'application/json'
@@ -61,6 +61,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     'A': 'ا', 'B': 'ب', 'C': 'ج', 'D': 'د', 'E': 'ء', 'F': 'ف', 'G': 'ج', 'H': 'ه', 'I': 'ي', 'J': 'ج',
     'K': 'ك', 'L': 'ل', 'M': 'م', 'N': 'ن', 'O': 'و', 'P': 'ب', 'Q': 'ق', 'R': 'ر', 'S': 'س', 'T': 'ت',
     'U': 'و', 'V': 'ف', 'W': 'و', 'X': 'ش', 'Y': 'ي', 'Z': 'ز',
+  };
+
+  // ★ Exact Arabic translations provided by user (used when toggling translation)
+  const exactArabicBacks = {
+    '1': 'كل مرة بشوفك فيها بحس إن اليوم بقى أخف وأجمل، وكأن الدنيا بتبتسملي عشان إنتِ فيها.',
+    '2': 'رينادا… يمكن ماكنتش عارف أقول قبل كده، بس وجودك في حياتي حتى لو من بعيد مفرق معايا أكتر ما تتخيلي.',
+    '3': 'أنا مش عايز منك غير إنك تعرفي إنك غالية عندي، وإن مشاعري ناحيتك صادقة من قلبي.',
+    '4': 'كنت فاكر إن اللي جوايا مجرد إعجاب، بس طلع أكبر من كده بكتير… طلع حب حقيقي.',
+    '5': '❤️ رينادا… بحبك، وبقولها وأنا مش خايف، حتى لو كانت من طرف واحد، يكفيني إني قلتها.'
   };
 
   // ★ Franco to Arabic translation function
@@ -143,7 +152,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
     
     // Send message via Formspree (provided URL)
-    fetch('https://formspree.io/f/xykdrnwl', {
+    fetch('https://formspree.io/f/xykdrbjw', {
       method: 'POST',
       headers: {
         'Accept': 'application/json'
@@ -204,7 +213,14 @@ document.addEventListener('DOMContentLoaded',()=>{
         card.setAttribute('data-original-back', originalBack);
         
         cardFront.textContent = translateFrancoToArabic(originalFront);
-        cardBack.innerHTML = translateFrancoToArabic(originalBack);
+          // Prefer exact user-provided Arabic string when available, otherwise fallback
+          const cardIndex = card.getAttribute('data-index');
+          const mapped = exactArabicBacks[cardIndex];
+          if(mapped){
+            cardBack.innerHTML = mapped;
+          } else {
+            cardBack.innerHTML = translateFrancoToArabic(originalBack);
+          }
       });
       
       // Translate other Franco text
