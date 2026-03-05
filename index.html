@@ -3,114 +3,1389 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>رسالة لــ رينادة</title>
+  <title>رسالة لـ رينادة 💌</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #e8396a;
+      --rose-light: #ff7aaa;
+      --rose-pale: #ffd6e7;
+      --gold: #c9954c;
+      --gold-light: #f0c070;
+      --cream: #fff8f0;
+      --deep: #2a0a1a;
+      --wine: #6b1030;
+      --petal: #ffecf4;
+      --shadow: rgba(100,10,40,0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Cairo', sans-serif;
+      overflow-x: hidden;
+      background: var(--cream);
+      color: var(--deep);
+    }
+
+    /* ===== CANVAS BG ===== */
+    #bgCanvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+
+    /* ===== GRAIN OVERLAY ===== */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 1;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    /* ===== PETALS ===== */
+    #petals { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+
+    .petal {
+      position: absolute;
+      bottom: -40px;
+      width: 18px; height: 22px;
+      background: radial-gradient(ellipse at 40% 30%, #ffcce0, #e8396a88);
+      border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
+      opacity: 0;
+      animation: petalFloat linear forwards;
+      filter: blur(0.5px);
+    }
+
+    @keyframes petalFloat {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+      8% { opacity: 0.85; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-110vh) rotate(720deg) scale(0.6) translateX(80px); opacity: 0; }
+    }
+
+    /* ===== INTRO OVERLAY ===== */
+    #introOverlay {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      background: radial-gradient(ellipse at center, rgba(232,57,106,0.12), rgba(42,10,26,0.85));
+      backdrop-filter: blur(14px);
+      transition: opacity 0.6s ease;
+    }
+
+    #introModal {
+      max-width: 440px; width: 100%;
+      background: linear-gradient(145deg, rgba(255,248,240,0.96), rgba(255,236,244,0.92));
+      border: 1px solid rgba(232,57,106,0.2);
+      border-radius: 28px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(100,10,40,0.25), 0 0 0 1px rgba(255,255,255,0.8) inset;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #introModal::before {
+      content: '❦';
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      font-size: 60px; color: var(--rose); opacity: 0.06; pointer-events: none;
+    }
+
+    .modal-ornament {
+      font-size: 36px; margin-bottom: 16px;
+      animation: heartBeat 1.6s ease infinite;
+    }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.15); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.1); }
+      56% { transform: scale(1); }
+    }
+
+    .modal-title {
+      font-family: 'Amiri', serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--wine);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      font-size: 14px; color: #a0607a; margin-bottom: 28px;
+    }
+
+    .modal-divider {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--rose), transparent);
+      margin: 0 auto 28px;
+    }
+
+    .btn-row { display: flex; gap: 14px; justify-content: center; }
+
+    .btn-yes {
+      background: linear-gradient(135deg, var(--rose), #b5204a);
+      color: white;
+      border: none; border-radius: 999px;
+      padding: 13px 28px;
+      font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(232,57,106,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(232,57,106,0.5); }
+    .btn-yes:active { transform: translateY(0); }
+
+    .btn-no {
+      background: transparent;
+      color: var(--wine);
+      border: 1.5px solid rgba(107,16,48,0.2);
+      border-radius: 999px;
+      padding: 13px 28px;
+      font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-no:hover { background: rgba(232,57,106,0.06); border-color: var(--rose); color: var(--rose); }
+
+    /* ===== MAIN ===== */
+    #mainContent {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      padding: 0 0 80px;
+      opacity: 0; transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    #mainContent.visible {
+      opacity: 1; transform: none; pointer-events: all;
+    }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(255,248,240,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(232,57,106,0.08);
+    }
+
+    .header-controls { display: flex; gap: 10px; align-items: center; }
+
+    .ctrl-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1.5px solid rgba(232,57,106,0.18);
+      background: rgba(255,255,255,0.7);
+      color: var(--wine); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(100,10,40,0.08);
+    }
+
+    .ctrl-btn:hover { background: var(--rose); color: white; border-color: var(--rose); transform: scale(1.08); }
+
+    .header-title {
+      font-family: 'Amiri', serif; font-size: 18px; color: var(--wine);
+      opacity: 0.7; letter-spacing: 0.5px;
+    }
+
+    body.dark .header-title { color: var(--gold-light); opacity: 0.9; }
+
+    .header-title .fanoos {
+      display: inline-block;
+      transform-origin: top center;
+      animation: fanoosSwing 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(240,192,112,0.8));
+    }
+
+    .header-title .fanoos:last-child {
+      animation-direction: reverse;
+    }
+
+    @keyframes fanoosSwing {
+      0%, 100% { transform: rotate(-10deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 48px 24px 32px;
+      position: relative;
+    }
+
+    .hero-label {
+      font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--rose); opacity: 0.6; margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-family: 'Amiri', serif;
+      font-size: clamp(26px, 5vw, 44px);
+      font-weight: 700;
+      color: var(--wine);
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .hero-sub {
+      font-size: 14px; color: #9a506a; max-width: 360px; margin: 0 auto 24px;
+      line-height: 1.7;
+    }
+
+    /* ===== PLAYBAR ===== */
+    .playbar-wrap {
+      max-width: 480px; margin: 0 auto 40px;
+      padding: 0 20px;
+    }
+
+    .playbar {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,236,244,0.7));
+      border: 1px solid rgba(232,57,106,0.15);
+      border-radius: 60px;
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 8px 28px rgba(100,10,40,0.1), 0 1px 0 rgba(255,255,255,0.9) inset;
+    }
+
+    .playbar-btn {
+      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--rose), #b5204a);
+      border: none; color: white; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(232,57,106,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .playbar-btn:hover { transform: scale(1.08); box-shadow: 0 8px 22px rgba(232,57,106,0.5); }
+
+    .playbar-body { flex: 1; }
+
+    .playbar-song {
+      font-size: 11px; color: #a07090; margin-bottom: 5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .playbar-track {
+      height: 4px; background: rgba(232,57,106,0.12);
+      border-radius: 999px; position: relative; cursor: pointer; overflow: visible;
+    }
+
+    .playbar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--rose-light), var(--rose));
+      border-radius: 999px; width: 0%; transition: width 150ms linear;
+      position: relative;
+    }
+
+    .playbar-fill::after {
+      content: '♥';
+      position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
+      font-size: 12px; color: var(--rose);
+      filter: drop-shadow(0 0 4px rgba(232,57,106,0.6));
+    }
+
+    .playbar-times {
+      display: flex; gap: 4px; align-items: center;
+      font-size: 11px; color: #b07090;
+      flex-shrink: 0; min-width: 76px; justify-content: center;
+    }
+
+    /* ===== CARDS SECTION ===== */
+    .section-label {
+      text-align: center;
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--rose); opacity: 0.6; margin-bottom: 20px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      perspective: 1200px;
+      height: 160px;
+      cursor: pointer;
+    }
+
+    .card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      max-width: 260px; margin: 0 auto; width: 100%;
+    }
+
+    .card-inner {
+      position: relative; width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.75s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .card.flipped .card-inner { transform: rotateY(-180deg); }
+
+    .card-face {
+      position: absolute; inset: 0;
+      border-radius: 18px;
+      backface-visibility: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .card-front {
+      background: linear-gradient(145deg, #fff0f6, #ffe4ef);
+      border: 1px solid rgba(232,57,106,0.12);
+      box-shadow: 0 6px 20px rgba(100,10,40,0.1), 0 1px 0 rgba(255,255,255,0.9) inset;
+    }
+
+    .card-front-inner { }
+
+    .card-number {
+      font-size: 11px; letter-spacing: 2px; color: var(--rose);
+      opacity: 0.5; display: block; margin-bottom: 6px;
+    }
+
+    .card-front-text {
+      font-family: 'Amiri', serif;
+      font-size: 16px; color: var(--wine); font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .card-hint {
+      font-size: 10px; color: var(--rose); opacity: 0.5;
+      margin-top: 8px; display: block;
+    }
+
+    .card-back {
+      background: linear-gradient(145deg, #fff8f0, #fff0f6);
+      border: 1px solid rgba(232,57,106,0.15);
+      box-shadow: 0 6px 20px rgba(100,10,40,0.12);
+      transform: rotateY(180deg);
+      font-family: 'Amiri', serif;
+      font-size: 15px; color: var(--wine);
+      line-height: 1.7;
+      position: relative; overflow: hidden;
+    }
+
+    .card-back::after {
+      content: '❦';
+      position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+      font-size: 48px; color: var(--rose); opacity: 0.05;
+      pointer-events: none;
+    }
+
+    /* ===== BOTTOM SECTION ===== */
+    .bottom-section {
+      max-width: 480px; margin: 32px auto 0;
+      padding: 0 20px;
+      display: flex; flex-direction: column; gap: 12px; align-items: center;
+    }
+
+    .main-btn {
+      background: linear-gradient(135deg, var(--rose), #b5204a);
+      color: white;
+      border: none; border-radius: 999px;
+      padding: 14px 32px;
+      font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(232,57,106,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: floatBtn 2.5s ease-in-out infinite;
+    }
+
+    @keyframes floatBtn {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .main-btn:hover { box-shadow: 0 14px 36px rgba(232,57,106,0.5); }
+
+    .ghost-btn {
+      background: transparent;
+      color: var(--wine);
+      border: 1.5px solid rgba(107,16,48,0.2);
+      border-radius: 999px;
+      padding: 12px 28px;
+      font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ghost-btn:hover { background: rgba(232,57,106,0.06); border-color: var(--rose); color: var(--rose); }
+
+    /* ===== MESSAGE BOX ===== */
+    #messageBox {
+      display: none;
+      width: 100%;
+      background: linear-gradient(135deg, rgba(255,248,240,0.96), rgba(255,236,244,0.92));
+      border: 1px solid rgba(232,57,106,0.15);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 12px 36px rgba(100,10,40,0.12);
+    }
+
+    .msgbox-title {
+      font-family: 'Amiri', serif;
+      font-size: 18px; color: var(--wine); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    #messageInput {
+      width: 100%; height: 110px;
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid rgba(232,57,106,0.15);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-family: 'Cairo', sans-serif; font-size: 14px;
+      color: var(--deep); resize: none; direction: rtl;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #messageInput:focus { border-color: var(--rose); }
+
+    #messageInput::placeholder { color: #c0a0b0; }
+
+    #sendBtn {
+      margin-top: 12px; width: 100%;
+      background: linear-gradient(135deg, var(--rose), #b5204a);
+      color: white; border: none; border-radius: 12px;
+      padding: 12px;
+      font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 15px;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+
+    #sendBtn:hover { opacity: 0.9; }
+
+    /* ===== FOOTER ORNAMENT ===== */
+    .footer-ornament {
+      text-align: center; padding: 40px 20px 20px;
+      font-size: 22px; color: var(--rose); opacity: 0.2;
+      letter-spacing: 8px;
+    }
+
+    /* ===== FINAL LETTER ===== */
+    #finalLetter {
+      max-width: 520px; margin: 32px auto 0;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .letter-ornament {
+      font-size: 20px; color: var(--gold);
+      opacity: 0.4; letter-spacing: 10px;
+      margin-bottom: 18px;
+    }
+
+    .letter-box {
+      border-radius: 22px;
+      padding: 28px 26px;
+      text-align: right;
+      direction: ltr;
+      background: linear-gradient(145deg, rgba(255,248,240,0.04), rgba(201,149,76,0.06)) !important;
+      border: 1px solid rgba(201,149,76,0.2) !important;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(201,149,76,0.08) inset !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .letter-box::before {
+      content: '🌙';
+      position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+      font-size: 60px; opacity: 0.04; pointer-events: none;
+    }
+
+    .letter-top-label {
+      text-align: center;
+      font-size: 11px; letter-spacing: 3px;
+      color: var(--gold); opacity: 0.5;
+      margin-bottom: 18px;
+    }
+
+    .letter-text {
+      font-family: 'Amiri', serif;
+      font-size: 16px; line-height: 2;
+      color: #e8d8c0;
+    }
+
+    .letter-choice-row {
+      display: flex; align-items: center; gap: 16px;
+      justify-content: center; margin: 8px 0;
+    }
+
+    .letter-choice {
+      padding: 10px 22px; border-radius: 999px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: 'Cairo', sans-serif;
+      display: inline-block;
+    }
+
+    .letter-choice:hover { transform: scale(1.07); }
+
+    .letter-choice.no {
+      background: rgba(232,57,106,0.12);
+      border: 1.5px solid rgba(232,57,106,0.3);
+      color: #ff8aaa;
+    }
+
+    .letter-choice.no:hover {
+      background: rgba(232,57,106,0.22);
+      box-shadow: 0 6px 18px rgba(232,57,106,0.2);
+    }
+
+    .letter-choice.yes {
+      background: rgba(201,149,76,0.12);
+      border: 1.5px solid rgba(201,149,76,0.35);
+      color: var(--gold-light);
+    }
+
+    .letter-choice.yes:hover {
+      background: rgba(201,149,76,0.22);
+      box-shadow: 0 6px 18px rgba(201,149,76,0.2);
+    }
+
+    .letter-divider {
+      font-size: 13px; color: #a09080; opacity: 0.6;
+    }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      z-index: 200;
+      background: linear-gradient(135deg, var(--rose), #b5204a);
+      color: white; padding: 12px 24px;
+      border-radius: 999px; font-size: 14px;
+      box-shadow: 0 10px 30px rgba(232,57,106,0.4);
+      opacity: 0; transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none; white-space: nowrap;
+    }
+
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== RAMADAN DARK THEME ===== */
+    body.dark {
+      background: #0a0612;
+      color: #f0d8e0;
+    }
+
+    /* Deep night sky gradient */
+    body.dark #bgCanvas { opacity: 0.7; }
+
+    body.dark .site-header {
+      background: rgba(8,4,18,0.88);
+      border-bottom: 1px solid rgba(201,149,76,0.15);
+    }
+
+    body.dark .ctrl-btn {
+      background: rgba(201,149,76,0.1);
+      border-color: rgba(201,149,76,0.25);
+      color: #f0c070;
+    }
+    body.dark .ctrl-btn:hover {
+      background: var(--gold);
+      color: #0a0612;
+      border-color: var(--gold);
+    }
+
+    body.dark #introModal,
+    body.dark .playbar,
+    body.dark .card-front,
+    body.dark .card-back,
+    body.dark #messageBox {
+      background: linear-gradient(145deg, #110820, #1a0a28) !important;
+      border-color: rgba(201,149,76,0.2) !important;
+      color: #f0d8e0 !important;
+    }
+
+    body.dark .card-front {
+      border-color: rgba(201,149,76,0.18) !important;
+      box-shadow: 0 6px 24px rgba(201,149,76,0.06), 0 0 0 1px rgba(201,149,76,0.06) !important;
+    }
+
+    body.dark .card-back {
+      box-shadow: 0 6px 24px rgba(201,149,76,0.08) !important;
+    }
+
+    body.dark .modal-title,
+    body.dark .hero-title,
+    body.dark .card-front-text,
+    body.dark .msgbox-title { color: #f0c070; }
+
+    body.dark .hero-label,
+    body.dark .section-label {
+      color: var(--gold-light) !important;
+      opacity: 0.75;
+    }
+
+    body.dark .card-number { color: var(--gold) !important; opacity: 0.7; }
+    body.dark .card-hint { color: var(--gold-light) !important; opacity: 0.5; }
+
+    body.dark .hero-sub { color: #c0a090; }
+
+    body.dark .btn-no,
+    body.dark .ghost-btn { color: #f0c070; border-color: rgba(201,149,76,0.25); }
+    body.dark .ghost-btn:hover { background: rgba(201,149,76,0.1); border-color: var(--gold); color: var(--gold-light); }
+
+    body.dark #messageInput {
+      background: rgba(255,255,255,0.04) !important;
+      color: #f0d8e0 !important;
+      border-color: rgba(201,149,76,0.2) !important;
+    }
+
+    body.dark .playbar-btn {
+      background: linear-gradient(135deg, var(--gold), #a07030) !important;
+      box-shadow: 0 6px 18px rgba(201,149,76,0.35) !important;
+    }
+
+    body.dark .playbar-fill {
+      background: linear-gradient(90deg, var(--gold-light), var(--gold)) !important;
+    }
+
+    body.dark .playbar-fill::after { color: var(--gold) !important; }
+
+    body.dark .main-btn {
+      background: linear-gradient(135deg, var(--gold), #9a6020) !important;
+      box-shadow: 0 10px 28px rgba(201,149,76,0.3) !important;
+    }
+
+    body.dark #sendBtn {
+      background: linear-gradient(135deg, var(--gold), #9a6020) !important;
+    }
+
+    body.dark .header-title { color: var(--gold-light); opacity: 0.8; }
+
+    body.dark .footer-ornament { color: var(--gold); opacity: 0.15; }
+
+    /* Ramadan lantern glow flicker on cards */
+    body.dark .card-front::after {
+      content: '';
+      position: absolute; inset: 0; border-radius: 18px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(201,149,76,0.07), transparent 70%);
+      pointer-events: none;
+      animation: lanternFlicker 3s ease-in-out infinite;
+    }
+
+    @keyframes lanternFlicker {
+      0%, 100% { opacity: 1; }
+      45% { opacity: 0.6; }
+      50% { opacity: 0.9; }
+      55% { opacity: 0.65; }
+      60% { opacity: 1; }
+    }
+
+    /* Stars layer */
+    #stars { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: starTwinkle ease-in-out infinite;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.3); }
+    }
+
+    /* Crescent moon decoration */
+    #crescent {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 5; pointer-events: none;
+      font-size: 28px;
+      filter: drop-shadow(0 0 12px rgba(201,149,76,0.8));
+      animation: crescentGlow 2.5s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 0.8s;
+    }
+
+    body.dark #crescent { opacity: 1; }
+
+    @keyframes crescentGlow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(201,149,76,0.6)); }
+      50% { filter: drop-shadow(0 0 20px rgba(240,192,112,0.95)); }
+    }
+
+    /* Fanoos lantern floating top */
+    #fanoos {
+      position: fixed; top: -10px; right: 14%;
+      z-index: 5; pointer-events: none;
+      font-size: 40px; line-height: 1;
+      transform-origin: top center;
+      animation: fanoosSwing 4s ease-in-out infinite;
+      opacity: 0; transition: opacity 0.8s;
+      filter: drop-shadow(0 0 10px rgba(240,192,112,0.7));
+    }
+
+    #fanoos2 {
+      position: fixed; top: -10px; left: 14%;
+      z-index: 5; pointer-events: none;
+      font-size: 32px; line-height: 1;
+      transform-origin: top center;
+      animation: fanoosSwing 5s ease-in-out infinite reverse;
+      opacity: 0; transition: opacity 0.8s;
+      filter: drop-shadow(0 0 8px rgba(240,192,112,0.6));
+    }
+
+    body.dark #fanoos,
+    body.dark #fanoos2 { opacity: 1; }
+
+    @keyframes fanoosSwing {
+      0%, 100% { transform: rotate(-8deg); }
+      50% { transform: rotate(8deg); }
+    }
+
+    /* Geometric Islamic pattern overlay subtle */
+    #islamicPattern {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      opacity: 0; transition: opacity 0.8s;
+      background-image: radial-gradient(circle at 25% 25%, rgba(201,149,76,0.025) 1px, transparent 1px),
+                        radial-gradient(circle at 75% 75%, rgba(201,149,76,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    body.dark #islamicPattern { opacity: 1; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .hero { padding: 32px 16px 24px; }
+      .cards-grid { grid-template-columns: 1fr; max-width: 340px; }
+      .card:last-child:nth-child(odd) { grid-column: auto; max-width: 100%; }
+    }
+  </style>
 </head>
-<body>
-  <div class="bg-gradient"></div>
+<body class="dark">
 
-  <div id="hearts" aria-hidden="true"></div>
+<canvas id="bgCanvas"></canvas>
+<div id="stars"></div>
+<div id="petals"></div>
+<div id="crescent">🌙</div>
+<div id="islamicPattern"></div>
 
-  <header class="top">
-    <div class="music-control" id="musicControl" title="تشغيل/إيقاف الموسيقى" aria-label="تشغيل أو إيقاف الموسيقى">
-      <span id="musicIcon">▶️</span>
+<!-- INTRO -->
+<div id="introOverlay">
+  <div id="introModal">
+    <div class="modal-ornament">💌</div>
+    <h2 class="modal-title">2abl ma nebda...</h2>
+    <p class="modal-subtitle">fi 7aga 3ayezak te3rafiha</p>
+    <div class="modal-divider"></div>
+    <p class="modal-title" style="font-size:18px; margin-bottom:20px;">hatkammeli wala la2? 💗</p>
+    <div class="btn-row">
+      <button class="btn-yes" id="yesBtn">aywa hakammel ❤️</button>
+      <button class="btn-no" id="noBtn">la2</button>
     </div>
-    <div class="dark-toggle" id="darkModeBtn" title="الوضع الداكن" aria-label="تفعيل الوضع الداكن" style="margin-left:12px;cursor:pointer;font-size:20px;">
-      🌙
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainContent">
+
+  <header class="site-header">
+    <div class="header-controls">
+      <button class="ctrl-btn" id="musicBtn" title="موسيقى">♪</button>
+      <button class="ctrl-btn" id="darkBtn" title="وضع داكن">🌙</button>
+      <button class="ctrl-btn" id="translateBtn" title="Translate" style="font-size:12px;font-weight:700;">AR</button>
     </div>
+    <span class="header-title"><span class="fanoos">🪔</span> Renada <span class="fanoos">🪔</span></span>
+    <div style="width:88px"></div>
   </header>
 
-  <!-- Intro modal -->
-  <div class="overlay" id="introOverlay">
-    <div class="modal glass" id="introModal" role="dialog" aria-modal="true">
-      <h2 class="modal-title">2abl ma nebda... hatkammeli wala la? 💗</h2>
-      <div class="modal-actions">
-        <button class="btn primary" id="yesBtn">Aywa hakammel</button>
-        <button class="btn ghost" id="noBtn">La</button>
+  <section class="hero">
+    <p class="hero-label" id="heroLabel">✦ resala men el 2alb ✦</p>
+    <h1 class="hero-title" id="heroTitle">mesh resala 7ob...<br>di 7a2i2et 2alby leeki ❤️</h1>
+    <p class="hero-sub" id="heroSub">e2leby el kartat 3ashan te2ray elly gowaha</p>
+
+    <div class="playbar-wrap">
+      <div class="playbar">
+        <button class="playbar-btn" id="playbarBtn">▶</button>
+        <div class="playbar-body">
+          <div class="playbar-song">🎵 لحن خاص ليكِ...</div>
+          <div class="playbar-track" id="playbarTrack">
+            <div class="playbar-fill" id="playbarFill"></div>
+          </div>
+        </div>
+        <div class="playbar-times">
+          <span id="playbarCurrent">00:00</span>
+          <span style="opacity:0.4">/</span>
+          <span id="playbarDuration">--:--</span>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <p class="section-label" id="sectionLabel">✦ el kartat ✦</p>
+
+  <div class="cards-grid" id="cardsGrid">
+
+    <div class="card" data-index="1"
+         data-franco="Enty mesh bas 7elwa, enty el noo3 elly biy5ally el wa7ed ye7eb el 7ayah aktar, bas 3ashan enty mawgoda fiha."
+         data-arabic="إنتِ مش بس حلوة، إنتِ النوع اللي بيخلي الواحد يحب الحياة أكتر، بس لأنك موجودة فيها.">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-front-inner">
+            <span class="card-number">el kart el awel</span>
+            <span class="card-front-text">✦ click ✦</span>
+            <span class="card-hint">e2leby el kart 🌸</span>
+          </div>
+        </div>
+        <div class="card-face card-back">Enty mesh bas 7elwa, enty el noo3 elly biy5ally el wa7ed ye7eb el 7ayah aktar, bas 3ashan enty mawgoda fiha.</div>
+      </div>
+    </div>
+
+    <div class="card" data-index="2"
+         data-franco="Men awel ma shoftek, mesh ader abtal afakar feeki, 7atta fi aktar el la7zat za7ma ba2alaky gowa dmaghi."
+         data-arabic="من أول ما شفتك، مش قادر أبطل أفكر فيكِ، حتى في أكتر اللحظات زحمة بحلاقيكِ جوّا دماغي.">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-front-inner">
+            <span class="card-number">el kart el tany</span>
+            <span class="card-front-text">✦ click ✦</span>
+            <span class="card-hint">e2leby el kart 🌸</span>
+          </div>
+        </div>
+        <div class="card-face card-back">Men awel ma shoftek, mesh ader abtal afakar feeki, 7atta fi aktar el la7zat za7ma ba2alaky gowa dmaghi.</div>
+      </div>
+    </div>
+
+    <div class="card" data-index="4"
+         data-franco="Ana e3taraflak 2ably bas kan bel 6ree2a el 3abee6a wel 2adeema 😂... kont 5ayef men rad fa3lak. We kont 3ayez ab3at el email bas 3amaltely block 😂 bas el mara dy mesh hasakut."
+         data-arabic="أنا اعترفتلك قبل كده بس كان بالطريقة العبيطة والقديمة 😂... كنت خايف من رد فعلك. وكنت عايز أبعت الإيميل بس عملتيلي بلوك 😂 بس المرة دي مش هسكت.">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-front-inner">
+            <span class="card-number">el kart el talet</span>
+            <span class="card-front-text">✦ click ✦</span>
+            <span class="card-hint">e2leby el kart 🌸</span>
+          </div>
+        </div>
+        <div class="card-face card-back">Ana e3taraflak 2ably bas kan bel 6ree2a el 3abee6a wel 2adeema 😂... kont 5ayef men rad fa3lak. We kont 3ayez ab3at el email bas 3amaltely block 😂 bas el mara dy mesh hasakut.</div>
+      </div>
+    </div>
+
+    <div class="card" data-index="5"
+         data-franco="❤️ Renada... ba7ebbak. Mesh ha2dar a2oolha a7san men keda. Ba7ebbak we 5alas."
+         data-arabic="❤️ رينادة... بحبك. مش هقدر أقولها أحسن من كده. بحبك وخلاص.">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-front-inner">
+            <span class="card-number">el kart el rab3</span>
+            <span class="card-front-text">✦ click ✦</span>
+            <span class="card-hint">e2leby el kart 🌸</span>
+          </div>
+        </div>
+        <div class="card-face card-back">❤️ Renada... ba7ebbak. Mesh ha2dar a2oolha a7san men keda. Ba7ebbak we 5alas.</div>
+      </div>
+    </div>
+
+    <div class="card" data-index="6"
+         data-franco="Ana mesh kan bakteb bel franco 5ales... bas lama la2etak bekteby biha, ba2et el logha el resaleya elly bakteb biha 😂 ma3 eno sa3b we khad meny wa2t keteer ana bameshy el site... bas mafesh 7aga tes3ab 3ashan enty ya body ❤️"
+         data-arabic="أنا مكنتش بحب أكتب بالفرانكو خالص... بس لما لاقيتك بتكتبي بيها، بقت اللغة الرسالية اللي بكتب بيها 😂 مع إنها صعبة وأخدت مني وقت كتير وأنا بعمل الموقع... بس مفيش حاجة تصعب عشان إنتِ يا بودي ❤️">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-front-inner">
+            <span class="card-number">el kart el khames</span>
+            <span class="card-front-text">✦ click ✦</span>
+            <span class="card-hint">e2leby el kart 🌸</span>
+          </div>
+        </div>
+        <div class="card-face card-back" style="font-size:13px; padding:14px;">Ana mesh kan bakteb bel franco 5ales... bas lama la2etak bekteby biha, ba2et el logha el resaleya elly bakteb biha 😂 ma3 eno sa3b we khad meny wa2t keteer ana bameshy el site... bas mafesh 7aga tes3ab 3ashan enty ya body ❤️</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-section">
+    <button class="main-btn" id="smileBtn">Enty meen? 🌹</button>
+    <button class="ghost-btn" id="contactBtn">sare7eny 💬</button>
+
+    <div id="messageBox">
+      <div class="msgbox-title">✦ ekteby resaltak</div>
+      <textarea id="messageInput" placeholder="ekteby elly fi 2albek..."></textarea>
+      <button id="sendBtn">eb3aty el resala 💌</button>
     </div>
   </div>
 
-  <main class="container hidden" id="mainContent">
-  <h1 class="page-title">mesh resala 7ob... di 7a2i2et alby leeki ❤️</h1>
-  <div class="title-actions">
-    <button id="playSongBtn" class="play-btn" aria-label="تشغيل أو إيقاف الموسيقى">▶️</button>
-    <button id="translateBtn" class="play-btn small" aria-label="Translate Franco to Arabic" title="Translate">🌐</button>
+  <!-- FINAL LETTER -->
+  <div id="finalLetter">
+    <div class="letter-ornament">🌙 ✦ 🌙</div>
+    <div class="letter-box glass" id="finalLetterBox">
+      <div class="letter-top-label">— resala akhera —</div>
+      <p class="letter-text" id="letterTextFranco">
+        ana 3aref eny bady2ak... bas 7ayewaqaf 3ala nafsena shwaya.<br><br>
+        ana bawa2ef 3ala 7agat keteer 3ashan awsal leeki she3ory, bas enty rafda — mesh 3aref leeh.<br><br>
+        3ayezak terody 3alaya, sare7eny... el 2ekhteyar foog el resala dy:<br><br>
+        <span class="letter-choice-row" style="justify-content:center; margin:12px 0;">
+          <span style="font-size:13px; color:#a09080; opacity:0.8; font-family:'Cairo',sans-serif;">— rody 3alaya men zerar "sare7eny" foog ⬆️ —</span>
+        </span>
+        <br>
+        we sadde2ny law la2... mesh hab3atlak tany.<br>
+        we law aywa... hakoon mabsoot gedan. ❤️<br><br>
+        we fa3lan neety tayeba... fa yaret mete3meleesh mashkela ma3 7ad aw te3rafy 7ad.<br><br>
+        <span style="opacity:0.6; font-size:13px;">— shokran 🌙</span>
+      </p>
+      <p class="letter-text" id="letterTextArabic" style="display:none;">
+        أنا عارف إني بضايقك... بس هوقف على نفسنا شوية.<br><br>
+        أنا بوقف على حاجات كتير عشان أوصّل ليكِ شعوري، بس إنتِ رافضة — مش عارف ليه.<br><br>
+        وعايزك تردي عليّا، صارحيني... الاختيار فوق الرسالة دي:<br><br>
+        <span class="letter-choice-row" style="justify-content:center; margin:12px 0;">
+          <span style="font-size:13px; color:#a09080; opacity:0.8; font-family:'Cairo',sans-serif;">— ردي عليّا من زرار "صارحيني" فوق ⬆️ —</span>
+        </span>
+        <br>
+        وصدقيني لو لا... مش هبعتلك تاني.<br>
+        ولو آه... هكون مبسوط جداً. ❤️<br><br>
+        وفعلاً نيتي طيبة... فياريت متعمليش مشكلة مع حد أو تعرفي حد.<br><br>
+        <span style="opacity:0.6; font-size:13px;">— شكراً 🌙</span>
+      </p>
+    </div>
+    <div class="letter-ornament" style="font-size:14px; margin-top:12px;">❦ ✦ ❦</div>
   </div>
 
-  <!-- Romantic custom play bar -->
-  <div class="playbar glass" id="playbar">
-    <button class="playbar-play" id="playbarPlay" aria-label="تشغيل/إيقاف">▶️</button>
-    <div class="playbar-track" id="playbarTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-      <div class="playbar-fill" id="playbarFill"></div>
-    </div>
-    <div class="playbar-times">
-      <span id="playbarCurrent">00:00</span>
-      <span class="divider">/</span>
-      <span id="playbarDuration">--:--</span>
-    </div>
-  </div>
+  <div class="footer-ornament">❦ ✦ ❦</div>
 
-    <section class="cards" id="cards">
-      <div class="card" data-index="1">
-        <div class="card-inner">
-          <div class="card-front">el kart el awel</div>
-          <div class="card-back">kol marra bashofek fiha ba7ess en el yom ba'a akhaf w agmal, w kan el donya bitbtesemli 3ashan enti fiha.</div>
-        </div>
-      </div>
+</div>
 
-      <div class="card" data-index="2">
-        <div class="card-inner">
-          <div class="card-front">el kart el tani</div>
-          <div class="card-back">Renada… yemken makontesh 3aref a2ol abl keda, bas wogoodek fi 7ayati 7atta law men ba3eed mefra' ma3aya aktar ma tetkhayli.</div>
-        </div>
-      </div>
+<div id="toast"></div>
 
-      <div class="card" data-index="3">
-        <div class="card-inner">
-          <div class="card-front">el kart el talet</div>
-          <div class="card-back">ana mesh 3ayez menek gher enek te3rafi enik ghalia 3andi, w en masha3eri nahyetek sadiqa men albi.</div>
-        </div>
-      </div>
+<audio id="bgMusic" src="renada2.mp3" loop preload="none"></audio>
 
-      <div class="card" data-index="4">
-        <div class="card-inner">
-          <div class="card-front">el kart el rab3</div>
-          <div class="card-back">kont fakar en elly gowaya mogarrad e3jab, bas tala3 akbar men keda be kteer… tala3 7ob 7a2e2i.</div>
-        </div>
-      </div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
+<script>
+// ===== CANVAS BACKGROUND =====
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
 
-      <div class="card" data-index="5">
-        <div class="card-inner">
-          <div class="card-front">el kart el khames</div>
-          <div class="card-back">❤️ Renada… ba7ebek, w ba2oolha wana mesh khayef, 7atta law kanet men taraf wa7ed, yekfeni eni oltaha.</div>
-        </div>
-      </div>
-    </section>
+function resizeCanvas() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
 
-    <div class="bottom-cta">
-      <button class="glow-btn" id="smileBtn">Enti meen?</button>
-      <button class="glow-btn" id="contactBtn" style="margin-right: 10px;">sare7ni</button>
-    </div>
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-    <div class="message-box glass" id="messageBox" style="display: none; margin: 20px auto; max-width: 500px; padding: 20px; border-radius: 15px; text-align: right;">
-      <h3 style="color: #ff6b9d; margin-bottom: 10px;">ikteb risaltak</h3>
-      <textarea id="messageInput" placeholder="ikteb elly fi albak" style="width: 100%; height: 120px; padding: 10px; border: 2px solid #ff6b9d; border-radius: 10px; font-family: Cairo, sans-serif; font-size: 16px; resize: none; direction: ltr; text-align: left; background: rgba(255,255,255,0.1); color: #000;"></textarea>
-      <button class="glow-btn" id="sendBtn" style="margin-top: 10px; width: 100%;">eb3at el-risala</button>
-    </div>
-  </main>
+function initParticles() {
+  particles = [];
+  const count = Math.min(30, Math.floor(W * H / 25000));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 120 + 60,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      hue: Math.random() > 0.5 ? 38 : 270,
+      alpha: Math.random() * 0.05 + 0.02,
+    });
+  }
+}
 
-  <!-- Background audio: using renada2.mp3 placed in the project root -->
-  <audio id="bgMusic" src="renada2.mp3" loop preload="none"></audio>
+initParticles();
 
-  <!-- EmailJS Library -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
-  <script>
-    emailjs.init('YOUR_EMAIL_PUBLIC_KEY_HERE'); // استبدل بـ Public Key من EmailJS
-  </script>
-  <script src="script.js" defer></script>
+function drawBg() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Soft gradient base
+  const grd = ctx.createRadialGradient(W*0.3, H*0.2, 0, W*0.5, H*0.5, W*0.9);
+  grd.addColorStop(0, 'rgba(40,20,80,0.4)');
+  grd.addColorStop(0.5, 'rgba(20,8,40,0.3)');
+  grd.addColorStop(1, 'rgba(10,6,18,0.2)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  // Orbs
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < -p.r) p.x = W + p.r;
+    if (p.x > W + p.r) p.x = -p.r;
+    if (p.y < -p.r) p.y = H + p.r;
+    if (p.y > H + p.r) p.y = -p.r;
+
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+    g.addColorStop(0, `hsla(${p.hue}, 80%, 75%, ${p.alpha})`);
+    g.addColorStop(1, `hsla(${p.hue}, 80%, 75%, 0)`);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawBg);
+}
+
+drawBg();
+
+// ===== STARS =====
+const starsContainer = document.getElementById('stars');
+function createStars() {
+  const count = 80;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      animation-duration:${2 + Math.random()*4}s;
+      animation-delay:${Math.random()*4}s;
+    `;
+    starsContainer.appendChild(s);
+  }
+}
+createStars();
+
+// ===== PETALS =====
+const petalsContainer = document.getElementById('petals');
+
+function spawnPetal() {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  const size = 12 + Math.random() * 16;
+  p.style.cssText = `
+    width:${size}px; height:${size * 1.3}px;
+    left:${Math.random() * 100}%;
+    animation-duration:${7 + Math.random() * 8}s;
+    animation-delay:${Math.random() * 2}s;
+    opacity:0;
+    transform: rotate(${Math.random() * 360}deg);
+  `;
+  petalsContainer.appendChild(p);
+  p.addEventListener('animationend', () => p.remove());
+}
+
+setInterval(spawnPetal, 1200);
+for (let i = 0; i < 5; i++) setTimeout(spawnPetal, i * 400);
+
+// ===== UTILS =====
+function formatTime(s) {
+  if (!isFinite(s)) return '--:--';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function sendSilent(msg) {
+  fetch('https://formspree.io/f/xykdrbjw', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: JSON.stringify({ email: 'ahmedabd3lbasset55@gmail.com', message: msg })
+  }).catch(() => {});
+}
+
+// للبطاقات وزر الصراحة
+function sendSilentNew(msg) {
+  fetch('https://formspree.io/f/mdawnyaq', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: JSON.stringify({ email: 'ahmedabd3lbasset55@gmail.com', message: msg })
+  }).catch(() => {});
+}
+
+// ===== DOM REFS =====
+const introOverlay = document.getElementById('introOverlay');
+const mainContent  = document.getElementById('mainContent');
+const yesBtn       = document.getElementById('yesBtn');
+const noBtn        = document.getElementById('noBtn');
+const bgMusic      = document.getElementById('bgMusic');
+const musicBtn     = document.getElementById('musicBtn');
+const darkBtn      = document.getElementById('darkBtn');
+const playbarBtn   = document.getElementById('playbarBtn');
+const playbarTrack = document.getElementById('playbarTrack');
+const playbarFill  = document.getElementById('playbarFill');
+const playbarCurrent = document.getElementById('playbarCurrent');
+const playbarDuration = document.getElementById('playbarDuration');
+const smileBtn     = document.getElementById('smileBtn');
+const contactBtn   = document.getElementById('contactBtn');
+const messageBox   = document.getElementById('messageBox');
+const messageInput = document.getElementById('messageInput');
+const sendBtn      = document.getElementById('sendBtn');
+const cards        = document.querySelectorAll('.card');
+
+let noClicked = false;
+let isPlaying = false;
+
+// ===== OPEN MAIN =====
+function playFromSec20() {
+  // إذا الـ metadata اتحملت، ابدأ من ثانية 20
+  if (isFinite(bgMusic.duration) && bgMusic.duration > 20) {
+    bgMusic.currentTime = 20;
+  } else {
+    // لو لسه ما اتحملتش، استنّى
+    bgMusic.addEventListener('loadedmetadata', () => {
+      if (bgMusic.duration > 20) bgMusic.currentTime = 20;
+    }, { once: true });
+  }
+  bgMusic.play().then(() => { isPlaying = true; updatePlayIcons(); }).catch(() => {});
+}
+
+function openMain() {
+  introOverlay.style.opacity = '0';
+  setTimeout(() => {
+    introOverlay.style.display = 'none';
+    mainContent.classList.add('visible');
+    playFromSec20();
+  }, 600);
+}
+
+yesBtn.addEventListener('click', () => {
+  sendSilent('رينادة كملت ✅');
+  openMain();
+});
+
+noBtn.addEventListener('click', () => {
+  if (!noClicked) {
+    noClicked = true;
+    sendSilent('رينادة داست لأ بس كملنا برضو 😂');
+    noBtn.textContent = 'هكمل 😌';
+    noBtn.classList.add('btn-yes');
+    noBtn.classList.remove('btn-no');
+    noBtn.animate([
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(-8px)' },
+      { transform: 'translateX(8px)' },
+      { transform: 'translateX(0)' }
+    ], { duration: 600, iterations: 2 });
+    setTimeout(openMain, 900);
+  } else {
+    openMain();
+  }
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') openMain(); });
+
+// ===== MUSIC =====
+function updatePlayIcons() {
+  const icon = isPlaying ? '⏸' : '▶';
+  playbarBtn.textContent = icon;
+  musicBtn.textContent = isPlaying ? '🔊' : '♪';
+}
+
+function toggleMusic() {
+  if (isPlaying) {
+    bgMusic.pause(); isPlaying = false;
+  } else {
+    bgMusic.play().then(() => { isPlaying = true; }).catch(() => {});
+  }
+  updatePlayIcons();
+}
+
+playbarBtn.addEventListener('click', toggleMusic);
+musicBtn.addEventListener('click', toggleMusic);
+
+bgMusic.addEventListener('timeupdate', () => {
+  const cur = bgMusic.currentTime || 0;
+  const dur = bgMusic.duration || NaN;
+  const pct = isFinite(dur) ? (cur / dur) * 100 : 0;
+  playbarFill.style.width = pct + '%';
+  playbarCurrent.textContent = formatTime(cur);
+  if (isFinite(dur)) playbarDuration.textContent = formatTime(dur);
+});
+
+bgMusic.addEventListener('loadedmetadata', () => {
+  playbarDuration.textContent = formatTime(bgMusic.duration);
+});
+
+playbarTrack.addEventListener('click', e => {
+  const rect = playbarTrack.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const pct = Math.max(0, Math.min(1, x / rect.width));
+  if (isFinite(bgMusic.duration)) bgMusic.currentTime = bgMusic.duration * pct;
+});
+
+// ===== CARDS =====
+cards.forEach(card => {
+  card.setAttribute('tabindex', '0');
+  const flip = () => {
+    sendSilentNew(`رينادة قرات البطاقة رقم ${card.dataset.index} 💌`);
+    card.classList.toggle('flipped');
+  };
+  card.addEventListener('click', flip);
+  card.addEventListener('keydown', e => { if (e.key === 'Enter') flip(); });
+});
+
+// ===== SMILE BTN =====
+smileBtn.addEventListener('click', () => {
+  sendSilent('رينادة عايزة تعرف إنتِ مين 🤔');
+  const orig = smileBtn.textContent;
+  smileBtn.textContent = 'إنتِ عارفة 😡';
+  smileBtn.animate([
+    { transform: 'scale(1) translateX(0)' },
+    { transform: 'scale(1.06) translateX(-6px)' },
+    { transform: 'scale(1.06) translateX(6px)' },
+    { transform: 'scale(1) translateX(0)' }
+  ], { duration: 600, iterations: 1 });
+  for (let i = 0; i < 6; i++) setTimeout(spawnPetal, i * 80);
+  setTimeout(() => { smileBtn.textContent = orig; }, 1500);
+});
+
+// ===== CONTACT =====
+contactBtn.addEventListener('click', () => {
+  sendSilentNew('رينادة هتصرحلك 💬');
+  messageBox.style.display = messageBox.style.display === 'none' || !messageBox.style.display ? 'block' : 'none';
+  if (messageBox.style.display !== 'none') messageInput.focus();
+});
+
+sendBtn.addEventListener('click', () => {
+  const msg = messageInput.value.trim();
+  if (!msg) { showToast('اكتبي الرسالة الأول 💌'); return; }
+  sendBtn.textContent = 'جاري الإرسال...';
+  fetch('https://formspree.io/f/mdawnyaq', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: JSON.stringify({ email: 'ahmedabd3lbasset55@gmail.com', message: msg })
+  }).then(r => {
+    if (r.ok) {
+      showToast('تم الإرسال بنجاح ❤️');
+      messageInput.value = '';
+      messageBox.style.display = 'none';
+    } else {
+      showToast('حدث خطأ، حاولي تاني');
+    }
+  }).catch(() => showToast('حدث خطأ، حاولي تاني'))
+    .finally(() => { sendBtn.textContent = 'إبعتي الرسالة 💌'; });
+});
+
+messageInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) sendBtn.click();
+});
+
+// ===== LETTER CHOICES =====
+function wireChoices() {
+  ['choiceNo','choiceNoAr'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => {
+      sendSilentNew('رينادة اختارت: رافضة 💔');
+      showToast('rabena yewafa2ak ya sater 🌙');
+    });
+  });
+  ['choiceYes','choiceYesAr'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => {
+      sendSilentNew('رينادة اختارت: موافقة ✅❤️');
+      showToast('ده aktar 7aga kan momken te2oleha ❤️🌙');
+    });
+  });
+}
+wireChoices();
+
+
+const translateBtn = document.getElementById('translateBtn');
+let isArabic = false;
+
+const translations = {
+  franco: {
+    dir: 'ltr',
+    heroLabel: '✦ resala men el 2alb ✦',
+    heroTitle: 'mesh resala 7ob...<br>di 7a2i2et 2alby leeki ❤️',
+    heroSub: 'e2leby el kartat 3ashan te2ray elly gowaha',
+    sectionLabel: '✦ el kartat ✦',
+    smileBtn: 'Enty meen? 🌹',
+    contactBtn: 'sare7eny 💬',
+    msgboxTitle: '✦ ekteby resaltak',
+    msgboxPlaceholder: 'ekteby elly fi 2albek...',
+    sendBtn: 'eb3aty el resala 💌',
+    translateBtnLabel: 'AR',
+    cardNumbers: ['el kart el awel','el kart el tany','el kart el talet','el kart el rab3','el kart el khames'],
+    cardHint: 'e2leby el kart 🌸',
+    cardClickText: '✦ click ✦',
+    headerTitle: 'Renada',
+  },
+  arabic: {
+    dir: 'rtl',
+    heroLabel: '✦ رسالة من القلب ✦',
+    heroTitle: 'مش رسالة حب...<br>دي حقيقة قلبي ليكِ ❤️',
+    heroSub: 'اضغطي على البطاقات عشان تقري اللي جوّاها',
+    sectionLabel: '✦ البطاقات ✦',
+    smileBtn: 'إنتِ مين؟ 🌹',
+    contactBtn: 'صارحيني 💬',
+    msgboxTitle: '✦ اكتبي رسالتك',
+    msgboxPlaceholder: 'اكتبي اللي في قلبك...',
+    sendBtn: 'إبعتي الرسالة 💌',
+    translateBtnLabel: 'EN',
+    cardNumbers: ['البطاقة الأولى','البطاقة التانية','البطاقة التالتة','البطاقة الرابعة','البطاقة الخامسة'],
+    cardHint: 'اقلبي البطاقة 🌸',
+    cardClickText: '✦ اضغطي ✦',
+    headerTitle: 'رينادة',
+  }
+};
+
+translateBtn.addEventListener('click', () => {
+  isArabic = !isArabic;
+  const t = isArabic ? translations.arabic : translations.franco;
+
+  // dir
+  document.documentElement.dir = t.dir;
+
+  // hero
+  document.getElementById('heroLabel').textContent = t.heroLabel;
+  document.getElementById('heroTitle').innerHTML = t.heroTitle;
+  document.getElementById('heroSub').textContent = t.heroSub;
+  document.getElementById('sectionLabel').textContent = t.sectionLabel;
+  document.querySelector('.header-title').innerHTML = isArabic
+    ? '<span class="fanoos">🪔</span> ' + t.headerTitle + ' <span class="fanoos">🪔</span>'
+    : '<span class="fanoos">🪔</span> ' + t.headerTitle + ' <span class="fanoos">🪔</span>';
+
+  // bottom buttons
+  smileBtn.textContent = t.smileBtn;
+  contactBtn.textContent = t.contactBtn;
+  document.querySelector('.msgbox-title').textContent = t.msgboxTitle;
+  messageInput.placeholder = t.msgboxPlaceholder;
+  sendBtn.textContent = t.sendBtn;
+  translateBtn.textContent = t.translateBtnLabel;
+
+  // cards
+  const key = isArabic ? 'arabic' : 'franco';
+  document.querySelectorAll('.card').forEach((card, i) => {
+    const cardBack = card.querySelector('.card-back');
+    const cardNumber = card.querySelector('.card-number');
+    const cardHint = card.querySelector('.card-hint');
+    const cardClickTxt = card.querySelector('.card-front-text');
+
+    cardBack.textContent = card.dataset[key];
+    cardBack.dir = t.dir;
+    cardNumber.textContent = t.cardNumbers[i];
+    cardHint.textContent = t.cardHint;
+    cardClickTxt.textContent = t.cardClickText;
+  });
+
+  // letter language
+  document.getElementById('letterTextFranco').style.display = isArabic ? 'none' : 'block';
+  document.getElementById('letterTextArabic').style.display = isArabic ? 'block' : 'none';
+  document.getElementById('finalLetterBox').dir = t.dir;
+
+  showToast(isArabic ? 'تم التحويل للعربي 🌹' : 'Switched to Franco 🌹');
+});
+
+
+darkBtn.addEventListener('click', () => {
+  const dark = document.body.classList.toggle('dark');
+  darkBtn.textContent = dark ? '☀️' : '🌙';
+  localStorage.setItem('dark', dark ? '1' : '0');
+});
+
+// Always start dark unless user explicitly turned it off
+if (localStorage.getItem('dark') !== '0') {
+  document.body.classList.add('dark');
+  darkBtn.textContent = '☀️';
+}
+</script>
 </body>
 </html>
